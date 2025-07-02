@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowRight, Shield, TrendingUp, Users, Wallet } from "lucide-react";
+import { ArrowRight, Shield, CreditCard, Users, Wallet } from "lucide-react";
 import AuthModal from "@/components/AuthModal";
 import { useNavigate } from "react-router-dom";
 
@@ -23,24 +23,24 @@ const Index = () => {
 
   const features = [
     {
-      icon: Wallet,
-      title: "Secure Payments",
-      description: "Process payments securely with advanced encryption and fraud protection"
-    },
-    {
-      icon: TrendingUp,
-      title: "Real-time Trading",
-      description: "Access live market data and execute trades instantly through Deriv API"
+      icon: CreditCard,
+      title: "Payment Processing",
+      description: "Process deposits and withdrawals securely for your clients through Deriv platform"
     },
     {
       icon: Users,
       title: "Client Management",
-      description: "Manage your clients efficiently with comprehensive dashboard tools"
+      description: "Manage your client accounts and transactions with comprehensive dashboard tools"
     },
     {
       icon: Shield,
-      title: "Regulatory Compliance",
-      description: "Stay compliant with international financial regulations and standards"
+      title: "Secure Transactions",
+      description: "All transactions are secured with advanced encryption and fraud protection"
+    },
+    {
+      icon: Wallet,
+      title: "Multi-Currency Support",
+      description: "Support multiple payment methods and currencies for global client convenience"
     }
   ];
 
@@ -54,7 +54,7 @@ const Index = () => {
               <div className="bg-blue-600 text-white p-2 rounded-lg mr-3">
                 <Wallet className="h-6 w-6" />
               </div>
-              <span className="text-xl font-bold text-gray-900">DerivPay Agent</span>
+              <span className="text-xl font-bold text-gray-900">Deriv Payment Agent</span>
             </div>
             <div className="flex items-center space-x-4">
               <Button variant="ghost" onClick={openLogin}>
@@ -74,11 +74,11 @@ const Index = () => {
           <div className="text-center">
             <h1 className="text-5xl font-bold text-gray-900 mb-6">
               Professional Payment Agent
-              <span className="text-blue-600 block">Solutions</span>
+              <span className="text-blue-600 block">Services</span>
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-              Empower your financial services with our secure payment agent platform. 
-              Integrated with Deriv API for seamless trading and payment processing.
+              Streamline your payment agent operations with our secure platform. 
+              Help your clients deposit and withdraw funds from their Deriv accounts seamlessly.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
@@ -86,7 +86,7 @@ const Index = () => {
                 onClick={openSignup}
                 className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-4"
               >
-                Start Trading <ArrowRight className="ml-2 h-5 w-5" />
+                Start Processing <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <Button 
                 size="lg" 
@@ -106,10 +106,10 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Why Choose Our Platform?
+              Why Choose Our Payment Agent Platform?
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Built for payment agents who demand security, reliability, and performance
+              Built for payment agents who need reliable, secure, and efficient payment processing
             </p>
           </div>
           
@@ -138,14 +138,14 @@ const Index = () => {
             Ready to Get Started?
           </h2>
           <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of payment agents who trust our platform for their financial operations
+            Join payment agents who trust our platform for secure and efficient client payment processing
           </p>
           <Button 
             size="lg" 
             onClick={openSignup}
             className="bg-white text-blue-600 hover:bg-gray-100 text-lg px-8 py-4"
           >
-            Create Account <ArrowRight className="ml-2 h-5 w-5" />
+            Become an Agent <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
         </div>
       </section>
@@ -157,10 +157,10 @@ const Index = () => {
             <div className="bg-blue-600 text-white p-2 rounded-lg mr-3">
               <Wallet className="h-6 w-6" />
             </div>
-            <span className="text-xl font-bold">DerivPay Agent</span>
+            <span className="text-xl font-bold">Deriv Payment Agent</span>
           </div>
           <p className="text-center text-gray-400 mt-4">
-            Professional payment solutions powered by Deriv API
+            Secure payment processing solutions powered by Deriv API
           </p>
         </div>
       </footer>

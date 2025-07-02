@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
   Wallet, 
-  TrendingUp, 
+  CreditCard, 
   Users, 
   DollarSign, 
   ArrowUpRight, 
@@ -22,7 +22,7 @@ const Dashboard = () => {
 
   const stats = [
     {
-      title: "Total Balance",
+      title: "Available Balance",
       value: "$12,345.67",
       change: "+2.5%",
       icon: Wallet,
@@ -36,14 +36,14 @@ const Dashboard = () => {
       color: "text-blue-600"
     },
     {
-      title: "Today's Volume",
+      title: "Today's Transactions",
       value: "$8,921.00",
       change: "+15.3%",
-      icon: TrendingUp,
+      icon: CreditCard,
       color: "text-purple-600"
     },
     {
-      title: "Commission",
+      title: "Commission Earned",
       value: "$234.56",
       change: "+8.2%",
       icon: DollarSign,
@@ -92,7 +92,7 @@ const Dashboard = () => {
               <div className="bg-blue-600 text-white p-2 rounded-lg mr-3">
                 <Wallet className="h-6 w-6" />
               </div>
-              <span className="text-xl font-bold text-gray-900">DerivPay Agent</span>
+              <span className="text-xl font-bold text-gray-900">Deriv Payment Agent</span>
             </div>
             <div className="flex items-center space-x-4">
               <Button variant="ghost" size="sm">
@@ -113,10 +113,10 @@ const Dashboard = () => {
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Welcome back, Agent
+            Welcome back, Payment Agent
           </h1>
           <p className="text-gray-600">
-            Here's what's happening with your payment agent business today.
+            Here's your payment processing activity overview for today.
           </p>
         </div>
 
@@ -148,7 +148,7 @@ const Dashboard = () => {
           <Card className="lg:col-span-2">
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
-                Recent Transactions
+                Recent Client Transactions
                 <Button variant="outline" size="sm">View All</Button>
               </CardTitle>
             </CardHeader>
@@ -194,16 +194,16 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent className="space-y-3">
               <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                Process Payment
+                Process Deposit
+              </Button>
+              <Button variant="outline" className="w-full">
+                Process Withdrawal
               </Button>
               <Button variant="outline" className="w-full">
                 Add New Client
               </Button>
               <Button variant="outline" className="w-full">
                 Generate Report
-              </Button>
-              <Button variant="outline" className="w-full">
-                API Settings
               </Button>
             </CardContent>
           </Card>
@@ -219,7 +219,7 @@ const Dashboard = () => {
               <div className="flex items-center space-x-3">
                 <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                 <div>
-                  <p className="font-medium text-gray-900">API Connection Active</p>
+                  <p className="font-medium text-gray-900">Payment API Connection Active</p>
                   <p className="text-sm text-gray-600">Connected to api.deriv.com</p>
                 </div>
               </div>
