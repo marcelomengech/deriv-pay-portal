@@ -1,24 +1,28 @@
 
-import { useState } from "react";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowRight, Shield, CreditCard, Users, Wallet } from "lucide-react";
-import AuthModal from "@/components/AuthModal";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  // Redirect authenticated users to dashboard
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   const openLogin = () => {
-    setAuthMode('login');
-    setShowAuthModal(true);
+    navigate('/auth');
   };
 
   const openSignup = () => {
-    setAuthMode('signup');
-    setShowAuthModal(true);
+    navigate('/auth');
   };
 
   const features = [
@@ -165,12 +169,6 @@ const Index = () => {
         </div>
       </footer>
 
-      <AuthModal 
-        isOpen={showAuthModal} 
-        onClose={() => setShowAuthModal(false)} 
-        mode={authMode}
-        onSwitchMode={setAuthMode}
-      />
     </div>
   );
 };
