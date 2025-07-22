@@ -17,10 +17,12 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('overview');
   const [userProfile, setUserProfile] = useState<any>(null);
 
@@ -111,6 +113,34 @@ const Dashboard = () => {
   const handleLogout = async () => {
     await signOut();
     navigate('/');
+  };
+
+  const handleProcessDeposit = () => {
+    toast({
+      title: "Process Deposit",
+      description: "Deposit processing feature coming soon. This will integrate with Deriv API.",
+    });
+  };
+
+  const handleProcessWithdrawal = () => {
+    toast({
+      title: "Process Withdrawal", 
+      description: "Withdrawal processing feature coming soon. This will integrate with Deriv API.",
+    });
+  };
+
+  const handleAddClient = () => {
+    toast({
+      title: "Add New Client",
+      description: "Client management feature coming soon. You'll be able to add and manage clients here.",
+    });
+  };
+
+  const handleGenerateReport = () => {
+    toast({
+      title: "Generate Report",
+      description: "Report generation feature coming soon. Export transaction and client reports.",
+    });
   };
 
   return (
@@ -224,16 +254,31 @@ const Dashboard = () => {
               <CardTitle>Quick Actions</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Button className="w-full bg-blue-600 hover:bg-blue-700">
+              <Button 
+                className="w-full bg-blue-600 hover:bg-blue-700"
+                onClick={handleProcessDeposit}
+              >
                 Process Deposit
               </Button>
-              <Button variant="outline" className="w-full">
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={handleProcessWithdrawal}
+              >
                 Process Withdrawal
               </Button>
-              <Button variant="outline" className="w-full">
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={handleAddClient}
+              >
                 Add New Client
               </Button>
-              <Button variant="outline" className="w-full">
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={handleGenerateReport}
+              >
                 Generate Report
               </Button>
             </CardContent>
