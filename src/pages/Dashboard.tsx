@@ -12,7 +12,9 @@ import {
   ArrowDownLeft,
   Bell,
   Settings,
-  LogOut
+  LogOut,
+  Plus,
+  Download
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -25,10 +27,21 @@ const Dashboard = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('overview');
   const [userProfile, setUserProfile] = useState<any>(null);
+  const [clients, setClients] = useState<any[]>([]);
+  const [transactions, setTransactions] = useState<any[]>([]);
+  const [stats, setStats] = useState({
+    totalClients: 0,
+    todayTransactions: 0,
+    totalAmount: 0,
+    pendingTransactions: 0
+  });
 
   useEffect(() => {
     if (user) {
       fetchUserProfile();
+      fetchClients();
+      fetchTransactions();
+      fetchStats();
     }
   }, [user]);
 
@@ -52,61 +65,118 @@ const Dashboard = () => {
     }
   };
 
-  const stats = [
-    {
-      title: "Available Balance",
-      value: "$12,345.67",
-      change: "+2.5%",
-      icon: Wallet,
-      color: "text-green-600"
-    },
+  const fetchClients = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('clients')
+        .select('*')
+        .eq('agent_id', user.id)
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        console.error('Error fetching clients:', error);
+      } else {
+        setClients(data || []);
+      }
+    } catch (error) {
+      console.error('Error fetching clients:', error);
+    }
+  };
+
+  const fetchTransactions = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('transactions')
+        .select(`
+          *,
+          clients:client_id (full_name)
+        `)
+        .eq('agent_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(5);
+      
+      if (error) {
+        console.error('Error fetching transactions:', error);
+      } else {
+        setTransactions(data || []);
+      }
+    } catch (error) {
+      console.error('Error fetching transactions:', error);
+    }
+  };
+
+  const fetchStats = async () => {
+    if (!user) return;
+    
+    try {
+      // Get client count
+      const { count: clientCount } = await supabase
+        .from('clients')
+        .select('*', { count: 'exact', head: true })
+        .eq('agent_id', user.id);
+
+      // Get today's transactions
+      const today = new Date().toISOString().split('T')[0];
+      const { data: todayTransactions, error: transError } = await supabase
+        .from('transactions')
+        .select('amount, status')
+        .eq('agent_id', user.id)
+        .gte('created_at', today);
+
+      // Get pending transactions count
+      const { count: pendingCount } = await supabase
+        .from('transactions')
+        .select('*', { count: 'exact', head: true })
+        .eq('agent_id', user.id)
+        .eq('status', 'pending');
+
+      if (!transError) {
+        const todayAmount = todayTransactions?.reduce((sum, t) => sum + parseFloat(t.amount.toString()), 0) || 0;
+        
+        setStats({
+          totalClients: clientCount || 0,
+          todayTransactions: todayTransactions?.length || 0,
+          totalAmount: todayAmount,
+          pendingTransactions: pendingCount || 0
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+    }
+  };
+
+  const dashboardStats = [
     {
       title: "Active Clients",
-      value: "127",
+      value: stats.totalClients.toString(),
       change: "+12",
       icon: Users,
       color: "text-blue-600"
     },
     {
       title: "Today's Transactions",
-      value: "$8,921.00",
-      change: "+15.3%",
+      value: stats.todayTransactions.toString(),
+      change: `$${stats.totalAmount.toFixed(2)}`,
       icon: CreditCard,
       color: "text-purple-600"
     },
     {
-      title: "Commission Earned",
-      value: "$234.56",
-      change: "+8.2%",
+      title: "Pending Transactions",
+      value: stats.pendingTransactions.toString(),
+      change: "Processing",
       icon: DollarSign,
       color: "text-orange-600"
-    }
-  ];
-
-  const recentTransactions = [
-    {
-      id: 1,
-      type: "deposit",
-      client: "John Smith",
-      amount: "+$500.00",
-      status: "completed",
-      time: "2 hours ago"
     },
     {
-      id: 2,
-      type: "withdrawal",
-      client: "Sarah Johnson",
-      amount: "-$250.00",
-      status: "pending",
-      time: "4 hours ago"
-    },
-    {
-      id: 3,
-      type: "deposit",
-      client: "Mike Wilson",
-      amount: "+$1,200.00",
-      status: "completed",
-      time: "6 hours ago"
+      title: "Payment Status",
+      value: "Online",
+      change: "API Connected",
+      icon: Wallet,
+      color: "text-green-600"
     }
   ];
 
@@ -116,24 +186,15 @@ const Dashboard = () => {
   };
 
   const handleProcessDeposit = () => {
-    toast({
-      title: "Process Deposit",
-      description: "Deposit processing feature coming soon. This will integrate with Deriv API.",
-    });
+    navigate('/process-transaction?type=deposit');
   };
 
   const handleProcessWithdrawal = () => {
-    toast({
-      title: "Process Withdrawal", 
-      description: "Withdrawal processing feature coming soon. This will integrate with Deriv API.",
-    });
+    navigate('/process-transaction?type=withdrawal');
   };
 
   const handleAddClient = () => {
-    toast({
-      title: "Add New Client",
-      description: "Client management feature coming soon. You'll be able to add and manage clients here.",
-    });
+    navigate('/add-client');
   };
 
   const handleGenerateReport = () => {
@@ -183,7 +244,7 @@ const Dashboard = () => {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {stats.map((stat, index) => (
+          {dashboardStats.map((stat, index) => (
             <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-gray-600">
@@ -215,35 +276,39 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {recentTransactions.map((transaction) => (
-                  <div key={transaction.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                    <div className="flex items-center space-x-4">
-                      <div className={`p-2 rounded-full ${
-                        transaction.type === 'deposit' ? 'bg-green-100' : 'bg-red-100'
-                      }`}>
-                        {transaction.type === 'deposit' ? (
-                          <ArrowDownLeft className="h-4 w-4 text-green-600" />
-                        ) : (
-                          <ArrowUpRight className="h-4 w-4 text-red-600" />
-                        )}
+                {transactions.length === 0 ? (
+                  <p className="text-gray-500 text-center py-8">No transactions yet. Start by adding clients and processing transactions.</p>
+                ) : (
+                  transactions.map((transaction) => (
+                    <div key={transaction.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                      <div className="flex items-center space-x-4">
+                        <div className={`p-2 rounded-full ${
+                          transaction.transaction_type === 'deposit' ? 'bg-green-100' : 'bg-red-100'
+                        }`}>
+                          {transaction.transaction_type === 'deposit' ? (
+                            <ArrowDownLeft className="h-4 w-4 text-green-600" />
+                          ) : (
+                            <ArrowUpRight className="h-4 w-4 text-red-600" />
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-medium text-gray-900">{transaction.clients?.full_name || 'Unknown Client'}</p>
+                          <p className="text-sm text-gray-500">{new Date(transaction.created_at).toLocaleString()}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-medium text-gray-900">{transaction.client}</p>
-                        <p className="text-sm text-gray-500">{transaction.time}</p>
+                      <div className="text-right">
+                        <p className={`font-medium ${
+                          transaction.transaction_type === 'deposit' ? 'text-green-600' : 'text-red-600'
+                        }`}>
+                          {transaction.transaction_type === 'deposit' ? '+' : '-'}${parseFloat(transaction.amount).toFixed(2)}
+                        </p>
+                        <Badge variant={transaction.status === 'completed' ? 'default' : 'secondary'}>
+                          {transaction.status}
+                        </Badge>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className={`font-medium ${
-                        transaction.type === 'deposit' ? 'text-green-600' : 'text-red-600'
-                      }`}>
-                        {transaction.amount}
-                      </p>
-                      <Badge variant={transaction.status === 'completed' ? 'default' : 'secondary'}>
-                        {transaction.status}
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </CardContent>
           </Card>

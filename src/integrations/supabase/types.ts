@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      clients: {
+        Row: {
+          agent_id: string
+          created_at: string
+          deriv_account_id: string | null
+          email: string | null
+          full_name: string
+          id: string
+          notes: string | null
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          agent_id: string
+          created_at?: string
+          deriv_account_id?: string | null
+          email?: string | null
+          full_name: string
+          id?: string
+          notes?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          agent_id?: string
+          created_at?: string
+          deriv_account_id?: string | null
+          email?: string | null
+          full_name?: string
+          id?: string
+          notes?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           agent_id: string | null
@@ -44,6 +80,62 @@ export type Database = {
         }
         Relationships: []
       }
+      transactions: {
+        Row: {
+          agent_id: string
+          amount: number
+          client_id: string
+          created_at: string
+          currency: string
+          id: string
+          notes: string | null
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          processed_at: string | null
+          reference_number: string | null
+          status: Database["public"]["Enums"]["transaction_status"]
+          transaction_type: Database["public"]["Enums"]["transaction_type"]
+          updated_at: string
+        }
+        Insert: {
+          agent_id: string
+          amount: number
+          client_id: string
+          created_at?: string
+          currency?: string
+          id?: string
+          notes?: string | null
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          processed_at?: string | null
+          reference_number?: string | null
+          status?: Database["public"]["Enums"]["transaction_status"]
+          transaction_type: Database["public"]["Enums"]["transaction_type"]
+          updated_at?: string
+        }
+        Update: {
+          agent_id?: string
+          amount?: number
+          client_id?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          notes?: string | null
+          payment_method?: Database["public"]["Enums"]["payment_method"]
+          processed_at?: string | null
+          reference_number?: string | null
+          status?: Database["public"]["Enums"]["transaction_status"]
+          transaction_type?: Database["public"]["Enums"]["transaction_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -52,7 +144,14 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      payment_method: "bank_transfer" | "e_wallet" | "crypto" | "cash" | "other"
+      transaction_status:
+        | "pending"
+        | "processing"
+        | "completed"
+        | "failed"
+        | "cancelled"
+      transaction_type: "deposit" | "withdrawal"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -179,6 +278,16 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      payment_method: ["bank_transfer", "e_wallet", "crypto", "cash", "other"],
+      transaction_status: [
+        "pending",
+        "processing",
+        "completed",
+        "failed",
+        "cancelled",
+      ],
+      transaction_type: ["deposit", "withdrawal"],
+    },
   },
 } as const

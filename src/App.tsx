@@ -10,6 +10,8 @@ import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import AddClient from "./pages/AddClient";
+import ProcessTransaction from "./pages/ProcessTransaction";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +28,16 @@ const App = () => (
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/add-client" element={
+              <ProtectedRoute>
+                <AddClient />
+              </ProtectedRoute>
+            } />
+            <Route path="/process-transaction" element={
+              <ProtectedRoute>
+                <ProcessTransaction />
               </ProtectedRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
