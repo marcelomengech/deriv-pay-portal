@@ -133,25 +133,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-blue-600">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">
-            Ready to Get Started?
-          </h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Join payment agents who trust our platform for secure and efficient client payment processing
-          </p>
-          <Button 
-            size="lg" 
-            onClick={openSignup}
-            className="bg-white text-blue-600 hover:bg-gray-100 text-lg px-8 py-4"
-          >
-            Become an Agent <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
-        </div>
-      </section>
-
       {/* Disclaimer Section */}
       <section className="py-12 bg-gray-50 border-t">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
