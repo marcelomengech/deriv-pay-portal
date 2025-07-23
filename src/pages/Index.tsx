@@ -77,12 +77,10 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-5xl font-bold text-gray-900 mb-6">
-              Professional Payment Agent
-              <span className="text-blue-600 block">Services</span>
+              CURRENCY AGENCY
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-              Streamline your payment agent operations with our secure platform. 
-              Help your clients deposit and withdraw funds from their Deriv accounts seamlessly.
+              Deriv Payment agency you can trust and work with 24/7 to deposit and withdraw your funds
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
