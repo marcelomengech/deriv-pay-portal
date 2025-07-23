@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowRight, Shield, CreditCard, Users, Wallet } from "lucide-react";
+import { ArrowRight, Shield, CreditCard, Users, Wallet, AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -137,7 +137,12 @@ const Index = () => {
       <section className="py-12 bg-gray-50 border-t">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white rounded-lg p-6 shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Disclaimer</h3>
+            <div className="flex items-center mb-4">
+              <div className="bg-amber-100 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
+                <AlertTriangle className="h-5 w-5 text-amber-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">Disclaimer</h3>
+            </div>
             <div className="text-sm text-gray-600 space-y-3">
               <p>
                 Deriv offers complex derivatives, such as options and contracts for difference ("CFDs"). 
