@@ -78,7 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const deleteAccount = async () => {
-    const { error } = await supabase.rpc('delete_user');
+    const { error } = await supabase.rpc('delete_user', {});
     if (!error) {
       await signOut();
     }

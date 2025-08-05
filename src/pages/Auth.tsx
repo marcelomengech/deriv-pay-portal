@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 
 const Auth = () => {
-  const [mode, setMode] = useState<'login' | 'signup'>('login');
+  const [mode, setMode] = useState<'login' | 'signup' | 'forgot-password'>('login');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -21,7 +21,7 @@ const Auth = () => {
   
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { signIn, signUp, user } = useAuth();
+  const { signIn, signUp, resetPassword, user } = useAuth();
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -36,10 +36,38 @@ const Auth = () => {
     
     try {
       // Basic validation
-      if (!formData.email || !formData.password) {
+      if (!formData.email) {
         toast({
           title: "Error",
-          description: "Please fill in all required fields",
+          description: "Please enter your email",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      if (mode === 'forgot-password') {
+        const { error } = await resetPassword(formData.email);
+        
+        if (error) {
+          toast({
+            title: "Error",
+            description: error.message,
+            variant: "destructive"
+          });
+        } else {
+          toast({
+            title: "Check your email",
+            description: "We've sent you a password reset link.",
+          });
+          setMode('login');
+        }
+        return;
+      }
+
+      if (!formData.password) {
+        toast({
+          title: "Error",
+          description: "Please enter your password",
           variant: "destructive"
         });
         return;
@@ -122,7 +150,7 @@ const Auth = () => {
         <Card>
           <CardHeader>
             <CardTitle className="text-center">
-              {mode === 'login' ? 'Sign In' : 'Create Account'}
+              {mode === 'login' ? 'Sign In' : mode === 'signup' ? 'Create Account' : 'Reset Password'}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -161,28 +189,30 @@ const Auth = () => {
                 </div>
               </div>
               
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
-                    className="pl-10 pr-10"
-                    value={formData.password}
-                    onChange={(e) => handleInputChange('password', e.target.value)}
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
-                  >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
+              {mode !== 'forgot-password' && (
+                <div className="space-y-2">
+                  <Label htmlFor="password">Password</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Enter your password"
+                      className="pl-10 pr-10"
+                      value={formData.password}
+                      onChange={(e) => handleInputChange('password', e.target.value)}
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {mode === 'signup' && (
                 <div className="space-y-2">
@@ -207,10 +237,24 @@ const Auth = () => {
                 className="w-full bg-blue-600 hover:bg-blue-700"
                 disabled={loading}
               >
-                {loading ? 'Loading...' : (mode === 'login' ? 'Sign In' : 'Create Account')}
+                {loading ? 'Loading...' : 
+                  mode === 'login' ? 'Sign In' : 
+                  mode === 'signup' ? 'Create Account' : 
+                  'Send Reset Link'
+                }
               </Button>
               
-              <div className="text-center">
+              <div className="text-center space-y-2">
+                {mode === 'login' && (
+                  <button
+                    type="button"
+                    onClick={() => setMode('forgot-password')}
+                    className="text-blue-600 hover:text-blue-700 text-sm block"
+                  >
+                    Forgot your password?
+                  </button>
+                )}
+                
                 <button
                   type="button"
                   onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
@@ -218,7 +262,9 @@ const Auth = () => {
                 >
                   {mode === 'login' 
                     ? "Don't have an account? Sign up" 
-                    : "Already have an account? Sign in"
+                    : mode === 'signup'
+                    ? "Already have an account? Sign in"
+                    : "Back to sign in"
                   }
                 </button>
               </div>
