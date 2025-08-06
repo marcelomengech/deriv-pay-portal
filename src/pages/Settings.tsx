@@ -4,11 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Trash2, User, Mail, ArrowLeft } from "lucide-react";
+import { Trash2, User, Mail, ArrowLeft, CreditCard, Shield } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import MpesaCredentials from "@/components/MpesaCredentials";
 
 const Settings = () => {
   const [loading, setLoading] = useState(false);
@@ -46,7 +48,7 @@ const Settings = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         <div className="flex items-center mb-6">
           <Button
             variant="ghost"
@@ -59,111 +61,143 @@ const Settings = () => {
           <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
         </div>
 
-        {/* Profile Information */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <User className="h-5 w-5 mr-2" />
-              Profile Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  id="email"
-                  type="email"
-                  value={user?.email || ''}
-                  className="pl-10"
-                  disabled
-                />
-              </div>
-              <p className="text-sm text-gray-500">
-                Email cannot be changed directly. Contact support if needed.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+        <Tabs defaultValue="profile" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="profile" className="flex items-center gap-2">
+              <User className="h-4 w-4" />
+              Profile
+            </TabsTrigger>
+            <TabsTrigger value="mpesa" className="flex items-center gap-2">
+              <CreditCard className="h-4 w-4" />
+              M-Pesa
+            </TabsTrigger>
+            <TabsTrigger value="security" className="flex items-center gap-2">
+              <Shield className="h-4 w-4" />
+              Security
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Account Actions */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Account Actions</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium">Sign Out</h3>
-                <p className="text-sm text-gray-500">Sign out of your account</p>
-              </div>
-              <Button variant="outline" onClick={handleSignOut}>
-                Sign Out
-              </Button>
-            </div>
-            
-            <Separator />
-            
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium text-red-600">Delete Account</h3>
-                <p className="text-sm text-gray-500">
-                  Permanently delete your account and all associated data
-                </p>
-              </div>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="destructive" className="bg-red-600 hover:bg-red-700">
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete Account
+          <TabsContent value="profile">
+            {/* Profile Information */}
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <User className="h-5 w-5 mr-2" />
+                  Profile Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="email"
+                      type="email"
+                      value={user?.email || ''}
+                      className="pl-10"
+                      disabled
+                    />
+                  </div>
+                  <p className="text-sm text-gray-500">
+                    Email cannot be changed directly. Contact support if needed.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Account Actions */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Account Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-medium">Sign Out</h3>
+                    <p className="text-sm text-gray-500">Sign out of your account</p>
+                  </div>
+                  <Button variant="outline" onClick={handleSignOut}>
+                    Sign Out
                   </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete your
-                      account and remove all your data from our servers, including:
-                      <br />
-                      <br />
-                      • Your profile information
-                      <br />
-                      • All client records
-                      <br />
-                      • All transaction history
-                      <br />
-                      • All associated data
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={handleDeleteAccount}
-                      className="bg-red-600 hover:bg-red-700"
-                      disabled={loading}
-                    >
-                      {loading ? 'Deleting...' : 'Yes, delete my account'}
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
-          </CardContent>
-        </Card>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        {/* Security Notice */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Security Notice</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-600">
-              For security reasons, some actions may require you to re-authenticate. 
-              If you encounter any issues, please contact our support team.
-            </p>
-          </CardContent>
-        </Card>
+          <TabsContent value="mpesa">
+            <MpesaCredentials />
+          </TabsContent>
+
+          <TabsContent value="security">
+            <Card>
+              <CardHeader>
+                <CardTitle>Security & Account Management</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <Separator />
+                  
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-medium text-red-600">Delete Account</h3>
+                      <p className="text-sm text-gray-500">
+                        Permanently delete your account and all associated data
+                      </p>
+                    </div>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive" className="bg-red-600 hover:bg-red-700">
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete Account
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete your
+                            account and remove all your data from our servers, including:
+                            <br />
+                            <br />
+                            • Your profile information
+                            <br />
+                            • All client records
+                            <br />
+                            • All transaction history
+                            <br />
+                            • All associated data
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={handleDeleteAccount}
+                            className="bg-red-600 hover:bg-red-700"
+                            disabled={loading}
+                          >
+                            {loading ? 'Deleting...' : 'Yes, delete my account'}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Security Notice */}
+                <div>
+                  <h3 className="font-medium mb-2">Security Notice</h3>
+                  <p className="text-sm text-gray-600">
+                    For security reasons, some actions may require you to re-authenticate. 
+                    If you encounter any issues, please contact our support team.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

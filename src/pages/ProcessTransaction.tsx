@@ -5,11 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import MpesaPayment from "@/components/MpesaPayment";
 
 const ProcessTransaction = () => {
   const navigate = useNavigate();
@@ -175,6 +176,7 @@ const ProcessTransaction = () => {
                       <SelectItem value="USD">USD</SelectItem>
                       <SelectItem value="EUR">EUR</SelectItem>
                       <SelectItem value="GBP">GBP</SelectItem>
+                      <SelectItem value="KES">KES</SelectItem>
                       <SelectItem value="BTC">BTC</SelectItem>
                     </SelectContent>
                   </Select>
@@ -187,13 +189,14 @@ const ProcessTransaction = () => {
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="bank_transfer">Bank Transfer</SelectItem>
-                    <SelectItem value="e_wallet">E-Wallet</SelectItem>
-                    <SelectItem value="crypto">Cryptocurrency</SelectItem>
-                    <SelectItem value="cash">Cash</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                  </SelectContent>
+                    <SelectContent>
+                      <SelectItem value="bank_transfer">Bank Transfer</SelectItem>
+                      <SelectItem value="e_wallet">E-Wallet</SelectItem>
+                      <SelectItem value="mpesa">M-Pesa</SelectItem>
+                      <SelectItem value="crypto">Cryptocurrency</SelectItem>
+                      <SelectItem value="cash">Cash</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
                 </Select>
               </div>
 
@@ -234,12 +237,35 @@ const ProcessTransaction = () => {
                   disabled={loading || !formData.client_id || !formData.amount}
                   className="flex-1"
                 >
-                  {loading ? "Processing..." : `Create ${transactionType === 'deposit' ? 'Deposit' : 'Withdrawal'}`}
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    `Create ${transactionType === 'deposit' ? 'Deposit' : 'Withdrawal'}`
+                  )}
                 </Button>
               </div>
             </form>
           </CardContent>
         </Card>
+
+        {/* M-Pesa Payment Option */}
+        {transactionType === 'deposit' && (
+          <div className="mt-8">
+            <h2 className="text-2xl font-semibold mb-4 text-gray-900">Or Pay with M-Pesa</h2>
+            <MpesaPayment 
+              clientId={formData.client_id} 
+              onPaymentSuccess={(transactionId) => {
+                toast({
+                  title: 'Payment Initiated',
+                  description: `Transaction ID: ${transactionId}. Check your phone for the M-Pesa prompt.`,
+                });
+              }} 
+            />
+          </div>
+        )}
       </div>
     </div>
   );

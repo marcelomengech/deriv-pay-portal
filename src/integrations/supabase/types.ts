@@ -84,10 +84,16 @@ export type Database = {
         Row: {
           agent_id: string
           amount: number
+          checkout_request_id: string | null
           client_id: string
           created_at: string
           currency: string
           id: string
+          merchant_request_id: string | null
+          mpesa_phone_number: string | null
+          mpesa_receipt_number: string | null
+          mpesa_result_desc: string | null
+          mpesa_transaction_date: string | null
           notes: string | null
           payment_method: Database["public"]["Enums"]["payment_method"]
           processed_at: string | null
@@ -99,10 +105,16 @@ export type Database = {
         Insert: {
           agent_id: string
           amount: number
+          checkout_request_id?: string | null
           client_id: string
           created_at?: string
           currency?: string
           id?: string
+          merchant_request_id?: string | null
+          mpesa_phone_number?: string | null
+          mpesa_receipt_number?: string | null
+          mpesa_result_desc?: string | null
+          mpesa_transaction_date?: string | null
           notes?: string | null
           payment_method: Database["public"]["Enums"]["payment_method"]
           processed_at?: string | null
@@ -114,10 +126,16 @@ export type Database = {
         Update: {
           agent_id?: string
           amount?: number
+          checkout_request_id?: string | null
           client_id?: string
           created_at?: string
           currency?: string
           id?: string
+          merchant_request_id?: string | null
+          mpesa_phone_number?: string | null
+          mpesa_receipt_number?: string | null
+          mpesa_result_desc?: string | null
+          mpesa_transaction_date?: string | null
           notes?: string | null
           payment_method?: Database["public"]["Enums"]["payment_method"]
           processed_at?: string | null
