@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-
+import SEO from "@/components/SEO";
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
@@ -205,100 +205,83 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <div className="bg-blue-600 text-white p-2 rounded-lg mr-3">
-                <Wallet className="h-6 w-6" />
-              </div>
-              <span className="text-xl font-bold text-gray-900">Deriv Payment Agent</span>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="sm">
-                <Bell className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="sm" onClick={() => navigate('/settings')}>
-                <Settings className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="sm" onClick={handleLogout}>
-                <LogOut className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+    <>
+      <SEO 
+        title="Dashboard | Deriv Pay Portal" 
+        description="Overview of clients and M-Pesa transactions." 
+        canonical="/dashboard" 
+      />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="container py-8">
         {/* Welcome Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <header className="mb-8">
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground mb-2">
             Welcome back, {userProfile?.full_name || user?.email}
           </h1>
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             Here's your payment processing activity overview for today.
           </p>
-        </div>
+        </header>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {dashboardStats.map((stat, index) => (
-            <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">
-                  {stat.title}
-                </CardTitle>
-                <stat.icon className={`h-4 w-4 ${stat.color}`} />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-gray-900 mb-1">
-                  {stat.value}
-                </div>
-                <p className="text-xs text-green-600 flex items-center">
-                  <ArrowUpRight className="h-3 w-3 mr-1" />
-                  {stat.change} from last month
-                </p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <section aria-labelledby="stats">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {dashboardStats.map((stat, index) => (
+              <Card key={index} className="transition-transform hover:scale-[1.01]">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm text-muted-foreground">
+                    {stat.title}
+                  </CardTitle>
+                  <stat.icon className="h-4 w-4 text-primary" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-semibold">
+                    {stat.value}
+                  </div>
+                  <p className="text-xs text-muted-foreground flex items-center">
+                    <ArrowUpRight className="h-3 w-3 mr-1" />
+                    {stat.change}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Recent Transactions */}
           <Card className="lg:col-span-2">
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 Recent Client Transactions
-                <Button variant="outline" size="sm">View All</Button>
+                <Button variant="outline" size="sm" onClick={() => navigate('/process-transaction')}>View All</Button>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {transactions.length === 0 ? (
-                  <p className="text-gray-500 text-center py-8">No transactions yet. Start by adding clients and processing transactions.</p>
+                  <p className="text-muted-foreground text-center py-8">No transactions yet. Start by adding clients and processing transactions.</p>
                 ) : (
                   transactions.map((transaction) => (
-                    <div key={transaction.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div key={transaction.id} className="flex items-center justify-between p-4 bg-muted rounded-lg">
                       <div className="flex items-center space-x-4">
                         <div className={`p-2 rounded-full ${
-                          transaction.transaction_type === 'deposit' ? 'bg-green-100' : 'bg-red-100'
+                          transaction.transaction_type === 'deposit' ? 'bg-primary/10' : 'bg-destructive/10'
                         }`}>
                           {transaction.transaction_type === 'deposit' ? (
-                            <ArrowDownLeft className="h-4 w-4 text-green-600" />
+                            <ArrowDownLeft className="h-4 w-4 text-primary" />
                           ) : (
-                            <ArrowUpRight className="h-4 w-4 text-red-600" />
+                            <ArrowUpRight className="h-4 w-4 text-destructive" />
                           )}
                         </div>
                         <div>
-                          <p className="font-medium text-gray-900">{transaction.clients?.full_name || 'Unknown Client'}</p>
-                          <p className="text-sm text-gray-500">{new Date(transaction.created_at).toLocaleString()}</p>
+                          <p className="font-medium">{transaction.clients?.full_name || 'Unknown Client'}</p>
+                          <p className="text-sm text-muted-foreground">{new Date(transaction.created_at).toLocaleString()}</p>
                         </div>
                       </div>
                       <div className="text-right">
                         <p className={`font-medium ${
-                          transaction.transaction_type === 'deposit' ? 'text-green-600' : 'text-red-600'
+                          transaction.transaction_type === 'deposit' ? 'text-primary' : 'text-destructive'
                         }`}>
                           {transaction.transaction_type === 'deposit' ? '+' : '-'}${parseFloat(transaction.amount).toFixed(2)}
                         </p>
@@ -320,7 +303,7 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent className="space-y-3">
               <Button 
-                className="w-full bg-blue-600 hover:bg-blue-700"
+                className="w-full"
                 onClick={handleProcessDeposit}
               >
                 Process Deposit
@@ -348,31 +331,34 @@ const Dashboard = () => {
               </Button>
             </CardContent>
           </Card>
-        </div>
+        </section>
 
         {/* API Integration Status */}
-        <Card className="mt-8">
-          <CardHeader>
-            <CardTitle>Deriv API Status</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
-              <div className="flex items-center space-x-3">
-                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                <div>
-                  <p className="font-medium text-gray-900">Payment API Connection Active</p>
-                  <p className="text-sm text-gray-600">Connected to api.deriv.com</p>
+        <section>
+          <Card className="mt-8">
+            <CardHeader>
+              <CardTitle>Deriv API Status</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <div className="w-3 h-3 bg-primary rounded-full"></div>
+                  <div>
+                    <p className="font-medium">Payment API Connection Active</p>
+                    <p className="text-sm text-muted-foreground">Connected to api.deriv.com</p>
+                  </div>
                 </div>
+                <Button variant="outline" size="sm" onClick={() => navigate('/settings')}>
+                  Configure
+                </Button>
               </div>
-              <Button variant="outline" size="sm">
-                Configure
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+            </CardContent>
+          </Card>
+        </section>
+      </main>
+    </>
   );
+
 };
 
 export default Dashboard;

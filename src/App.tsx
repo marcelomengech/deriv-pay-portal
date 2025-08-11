@@ -13,6 +13,7 @@ import NotFound from "./pages/NotFound";
 import AddClient from "./pages/AddClient";
 import ProcessTransaction from "./pages/ProcessTransaction";
 import Settings from "./pages/Settings";
+import AppLayout from "@/components/layout/AppLayout";
 
 const queryClient = new QueryClient();
 
@@ -28,22 +29,30 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/dashboard" element={
               <ProtectedRoute>
-                <Dashboard />
+                <AppLayout>
+                  <Dashboard />
+                </AppLayout>
               </ProtectedRoute>
             } />
             <Route path="/add-client" element={
               <ProtectedRoute>
-                <AddClient />
+                <AppLayout>
+                  <AddClient />
+                </AppLayout>
               </ProtectedRoute>
             } />
             <Route path="/process-transaction" element={
               <ProtectedRoute>
-                <ProcessTransaction />
+                <AppLayout>
+                  <ProcessTransaction />
+                </AppLayout>
               </ProtectedRoute>
             } />
             <Route path="/settings" element={
               <ProtectedRoute>
-                <Settings />
+                <AppLayout>
+                  <Settings />
+                </AppLayout>
               </ProtectedRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
