@@ -10,6 +10,7 @@ const corsHeaders = {
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
+const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -17,7 +18,26 @@ serve(async (req) => {
   }
 
   try {
-    const { phone, amount, accountReference, transactionDesc, environment = 'sandbox' } = await req.json();
+    // Get authenticated user from the request
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: req.headers.get('Authorization') || '' } },
+    });
+    const { data: { user }, error: userError } = await supabaseAuth.auth.getUser();
+    if (userError || !user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const { phone, amount, accountReference, transactionDesc, environment = 'sandbox', clientId } = await req.json();
+
+    if (!clientId) {
+      return new Response(JSON.stringify({ error: 'clientId is required' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     // Get M-Pesa credentials based on environment
     const consumerKey = environment === 'sandbox' 
@@ -100,20 +120,22 @@ serve(async (req) => {
 
     if (stkData.ResponseCode === '0') {
       // Store transaction in database
-      const { error: dbError } = await supabase
-        .from('transactions')
-        .insert({
-          merchant_request_id: stkData.MerchantRequestID,
-          checkout_request_id: stkData.CheckoutRequestID,
-          transaction_type: 'deposit',
-          amount: parseFloat(amount),
-          currency: 'KES',
-          payment_method: 'mpesa',
-          status: 'pending',
-          reference_number: accountReference,
-          notes: `M-Pesa payment: ${transactionDesc}`,
-          agent_id: null, // Will be updated when we know the user
-        });
+        const { error: dbError } = await supabase
+          .from('transactions')
+          .insert({
+            merchant_request_id: stkData.MerchantRequestID,
+            checkout_request_id: stkData.CheckoutRequestID,
+            transaction_type: 'deposit',
+            amount: parseFloat(amount),
+            currency: 'KES',
+            payment_method: 'mpesa',
+            status: 'pending',
+            reference_number: accountReference,
+            notes: `M-Pesa payment: ${transactionDesc}`,
+            agent_id: user.id,
+            client_id: clientId,
+            mpesa_phone_number: phone,
+          });
 
       if (dbError) {
         console.error('Database error:', dbError);

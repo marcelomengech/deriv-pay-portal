@@ -75,7 +75,8 @@ const MpesaPayment: React.FC<MpesaPaymentProps> = ({ clientId, onPaymentSuccess 
           amount: formData.amount,
           accountReference: formData.accountReference || 'Payment',
           transactionDesc: formData.transactionDesc || 'Payment',
-          environment: environment
+          environment: environment,
+          clientId: clientId,
         }
       });
 
