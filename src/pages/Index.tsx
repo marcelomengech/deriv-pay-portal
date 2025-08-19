@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { ArrowRight, Shield, CreditCard, Users, Wallet, AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import DemoCredentials from "@/components/DemoCredentials";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -25,26 +26,26 @@ const Index = () => {
     navigate('/auth');
   };
 
-  const features = [
+  const demoFeatures = [
     {
       icon: CreditCard,
-      title: "Payment Processing",
-      description: "Process deposits and withdrawals securely for your clients through Deriv platform"
+      title: "🔗 Deriv OAuth Login",
+      description: "Live integration with Deriv API - users login with their actual Deriv accounts and data syncs automatically"
     },
     {
       icon: Users,
-      title: "Client Management",
-      description: "Manage your client accounts and transactions with comprehensive dashboard tools"
+      title: "📱 M-Pesa STK Push", 
+      description: "Real M-Pesa integration - test with 254708374149 to see live STK push notifications on mobile"
     },
     {
       icon: Shield,
-      title: "Secure Transactions",
-      description: "All transactions are secured with advanced encryption and fraud protection"
+      title: "🔐 Supabase Backend",
+      description: "Professional database with Row Level Security, real-time transactions, and secure API endpoints"
     },
     {
       icon: Wallet,
-      title: "Multi-Currency Support",
-      description: "Support multiple payment methods and currencies for global client convenience"
+      title: "📊 Live Dashboard",
+      description: "Real-time transaction tracking, client management, and comprehensive reporting system"
     }
   ];
 
@@ -77,10 +78,14 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-5xl font-bold text-gray-900 mb-6">
-              CURRENCY AGENCY
+              DERIV PAYMENT AGENT
             </h1>
+            <h2 className="text-2xl font-semibold text-blue-600 mb-4">
+              🔗 Integrated with Deriv API & M-Pesa
+            </h2>
             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-              Deriv Payment agency you can trust and work with 24/7 to deposit and withdraw your funds
+              Professional payment agency platform connecting Deriv traders with secure M-Pesa transactions. 
+              <strong className="text-gray-800"> Live Demo Ready!</strong>
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
@@ -103,33 +108,67 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Demo Features Section */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Why Choose Our Payment Agent Platform?
+              🚀 Live Integration Demo
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Built for payment agents who need reliable, secure, and efficient payment processing
+              Fully functional Deriv OAuth & M-Pesa STK Push integration ready for testing
             </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => (
-              <Card key={index} className="p-6 hover:shadow-lg transition-shadow duration-300">
-                <div className="bg-blue-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-                  <feature.icon className="h-6 w-6 text-blue-600" />
+            {demoFeatures.map((feature, index) => (
+              <Card key={index} className="p-6 hover:shadow-lg transition-shadow duration-300 border-2 border-green-200">
+                <div className="bg-green-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                  <feature.icon className="h-6 w-6 text-green-600" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   {feature.title}
                 </h3>
-                <p className="text-gray-600">
+                <p className="text-gray-600 text-sm">
                   {feature.description}
                 </p>
               </Card>
             ))}
           </div>
+          
+          {/* Demo Instructions */}
+          <div className="mt-16 bg-blue-50 rounded-xl p-8">
+            <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+              📋 Demo Instructions for Employer
+            </h3>
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="bg-white rounded-lg p-6">
+                <h4 className="font-bold text-lg mb-3 text-blue-600">1. Test Deriv Login</h4>
+                <ul className="space-y-2 text-sm text-gray-600">
+                  <li>• Click "Login with Deriv" button</li>
+                  <li>• Uses real Deriv OAuth API</li>
+                  <li>• Automatically creates user profile</li>
+                  <li>• Syncs Deriv account data</li>
+                </ul>
+              </div>
+              <div className="bg-white rounded-lg p-6">
+                <h4 className="font-bold text-lg mb-3 text-green-600">2. Test M-Pesa Payment</h4>
+                <ul className="space-y-2 text-sm text-gray-600">
+                  <li>• Add a test client in dashboard</li>
+                  <li>• Process transaction with 254708374149</li>
+                  <li>• See live STK push on phone</li>
+                  <li>• View transaction in database</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Demo Credentials Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <DemoCredentials />
         </div>
       </section>
 
