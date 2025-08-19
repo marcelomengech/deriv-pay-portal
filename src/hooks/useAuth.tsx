@@ -8,6 +8,7 @@ interface AuthContextType {
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error?: any }>;
   signUp: (email: string, password: string, fullName: string) => Promise<{ error?: any }>;
+  signInWithDeriv: () => void;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error?: any }>;
   deleteAccount: () => Promise<{ error?: any }>;
@@ -77,6 +78,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { error };
   };
 
+  const signInWithDeriv = () => {
+    // Get Deriv app ID from environment or use a default
+    const derivAppId = '64652'; // You'll need to replace this with your actual Deriv App ID
+    const redirectUrl = `${window.location.origin}/auth?provider=deriv`;
+    
+    // Store the redirect URL for after OAuth
+    sessionStorage.setItem('derivAuthRedirect', '/dashboard');
+    
+    // Redirect to Deriv OAuth
+    window.location.href = `https://oauth.deriv.com/oauth2/authorize?app_id=${derivAppId}&l=en&brand=deriv`;
+  };
+
   const deleteAccount = async () => {
     const { error } = await supabase.rpc('delete_user', {});
     if (!error) {
@@ -92,6 +105,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       loading,
       signIn,
       signUp,
+      signInWithDeriv,
       signOut,
       resetPassword,
       deleteAccount

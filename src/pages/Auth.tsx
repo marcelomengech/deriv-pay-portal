@@ -21,7 +21,73 @@ const Auth = () => {
   
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { signIn, signUp, resetPassword, user } = useAuth();
+  const { signIn, signUp, resetPassword, signInWithDeriv, user } = useAuth();
+
+  // Handle Deriv OAuth callback
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const provider = urlParams.get('provider');
+    
+    if (provider === 'deriv') {
+      // Extract Deriv tokens from URL parameters
+      const accounts = [];
+      let i = 1;
+      while (urlParams.get(`acct${i}`)) {
+        accounts.push({
+          accountId: urlParams.get(`acct${i}`),
+          token: urlParams.get(`token${i}`),
+          currency: urlParams.get(`cur${i}`)
+        });
+        i++;
+      }
+      
+      if (accounts.length > 0) {
+        // Handle successful Deriv authentication
+        handleDerivAuth(accounts);
+      }
+    }
+  }, []);
+
+  const handleDerivAuth = async (accounts: any[]) => {
+    try {
+      setLoading(true);
+      
+      // Call edge function to handle Deriv authentication
+      const response = await fetch('/functions/v1/deriv-auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ accounts })
+      });
+      
+      const result = await response.json();
+      
+      if (result.error) {
+        toast({
+          title: "Authentication Error",
+          description: result.error,
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: "Logged in with Deriv successfully!",
+        });
+        const redirectPath = sessionStorage.getItem('derivAuthRedirect') || '/dashboard';
+        sessionStorage.removeItem('derivAuthRedirect');
+        navigate(redirectPath);
+      }
+    } catch (error) {
+      toast({
+        title: "Authentication Error", 
+        description: "Failed to authenticate with Deriv",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -243,6 +309,36 @@ const Auth = () => {
                   'Send Reset Link'
                 }
               </Button>
+              
+              {mode === 'login' && (
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-muted-foreground">
+                      Or continue with
+                    </span>
+                  </div>
+                </div>
+              )}
+              
+              {mode === 'login' && (
+                <Button 
+                  type="button"
+                  variant="outline" 
+                  className="w-full"
+                  onClick={signInWithDeriv}
+                  disabled={loading}
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="w-5 h-5 bg-red-600 rounded text-white flex items-center justify-center text-xs font-bold">
+                      D
+                    </div>
+                    Login with Deriv
+                  </div>
+                </Button>
+              )}
               
               <div className="text-center space-y-2">
                 {mode === 'login' && (
